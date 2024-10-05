@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "heizungs-app"
+name = "Strom-Tracker-App"
 version = "0.1.0"
 description = ""
 authors = ["MrMaransm <ron_marvin@yahoo.de>"]
@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 streamlit = "^1.39.0"
+streamlit-elements = "==0.1.*"
 
 
 [build-system]
