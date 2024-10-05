@@ -5,7 +5,10 @@ Basically you have a timeline and you can add something based on year and month.
 
 to run locally:
 pip install poetry
+then
 poetry install
+
+to start the app:
 streamlit run main.py  
 
 To build:
