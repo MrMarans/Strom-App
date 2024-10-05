@@ -12,18 +12,18 @@ current_directory = os.getcwd()
 chart = st.line_chart()
 
 Month_translator = {
-    "Januar": 1,
-    "Februar": 2,
-    "März": 3,
-    "April": 4,
-    "Mai": 5,
-    "Juni": 6,
-    "Juli": 7,
-    "August": 8,
-    "Sepember": 9,
-    "Oktober": 10,
-    "November": 11,
-    "Dezember": 12
+    "Januar": "01",
+    "Februar": "02",
+    "März": "03",
+    "April": "04",
+    "Mai": "05",
+    "Juni": "06",
+    "Juli": "07",
+    "August": "08",
+    "Sepember": "09",
+    "Oktober": "10",
+    "November": "11",
+    "Dezember": "12"
 }
 
 def loadChart(chosenYear):
@@ -51,7 +51,6 @@ def loadChart(chosenYear):
             for month, value in data.items():
                 timeline[f"{year}_{month}"] = value
             
-        print(timeline)
         chart.line_chart(data=timeline, x_label="Monat", y_label="Strommenge")
     else:
         chart.line_chart(data=years_data[chosenYear], x_label="Monat", y_label="Strommenge")
@@ -89,7 +88,6 @@ def drawInputs():
     month = st.selectbox("Wähle einen Monat:", ["Bitte Auswählen", "Januar","Februar","März","April","Mai","Juni","Juli","August","Sepember","Oktober","November","Dezember"])
 
     strom = st.number_input("Menge:", value=0)
-    st.write(f"{strom} gemacht")
 
 
     if st.button("Daten speichern"):
