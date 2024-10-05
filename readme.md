@@ -1,4 +1,4 @@
-docker build -t heizungs-app -f app.dockerfile .
+docker build -t strom-app -f app.dockerfile .
 
 then
 

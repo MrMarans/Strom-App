@@ -42,8 +42,17 @@ def loadChart(chosenYear):
                     st.write("Error loading")
 
 
-    if chosenYear == "alle":
+    if chosenYear == "Alle":
         chart.line_chart(data=years_data, x_label="Monat", y_label="Strommenge")
+    
+    elif chosenYear == "Zeitlinie":
+        timeline = {} 
+        for year, data in years_data.items():
+            for month, value in data.items():
+                timeline[f"{year}_{month}"] = value
+            
+        print(timeline)
+        chart.line_chart(data=timeline, x_label="Monat", y_label="Strommenge")
     else:
         chart.line_chart(data=years_data[chosenYear], x_label="Monat", y_label="Strommenge")
 
@@ -51,7 +60,7 @@ def loadChart(chosenYear):
 
 
 def drawYearsRadio():
-    years = ["alle"]
+    years = ["Alle", "Zeitlinie"]
     for year in range (35):
             year += 2000 
             filename = f"y{year}.json"
@@ -64,8 +73,8 @@ def drawYearsRadio():
         years,
         )
     
-    if chosenYear == "alle":
-        passYear = "alle"
+    if chosenYear == "Alle":
+        passYear = "Alle"
     else: 
         passYear = chosenYear
     loadChart(passYear)
@@ -96,10 +105,10 @@ def drawInputs():
                     st.write(f"new file for year 20{year} created")
                     old = {str(Month_translator[month]):strom}
                 
-                
                 with open(filename,'w') as file:
                     json.dump(old, file)
-                    loadChart()
+                
+                loadChart("Alle")
 
 
             else: st.write(f"Bitte noch den Monat auswählen")
@@ -109,5 +118,5 @@ def drawInputs():
 
 
 
-loadChart("alle")
+loadChart("Alle")
 drawInputs()
