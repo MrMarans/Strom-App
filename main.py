@@ -12,26 +12,24 @@ current_directory = os.getcwd()
 # plot = st.pyplot()
 #chart = st.line_chart()
 
+
 Month_translator = {
-    "Januar": "01",
-    "Februar": "02",
-    "März": "03",
-    "April": "04",
-    "Mai": "05",
-    "Juni": "06",
-    "Juli": "07",
-    "August": "08",
-    "Sepember": "09",
-    "Oktober": "10",
-    "November": "11",
-    "Dezember": "12"
+    1: "Januar",
+    2: "Februar",
+    3: "März",
+    4: "April",
+    5: "Mai",
+    6: "Juni",
+    7: "Juli",
+    8: "August",
+    9: "September",  # Korrektur der Schreibweise von "September"
+    10: "Oktober",
+    11: "November",
+    12: "Dezember"
 }
 
-
-
-def loadChart(chosenYear):
+def getAllYears():
     years_data = {}
-    data = {}
     
     for year in range (35):
         year += 2000 
@@ -43,7 +41,13 @@ def loadChart(chosenYear):
                     years_data[year] = year_data         
                 except EOFError:
                     st.write("Error loading")
+    return years_data
 
+def loadChart(chosenYear):
+    years_data = getAllYears()
+
+    # Add range slider for selecting the range of points to display
+    
 
     # Daten generieren
     strom = []
@@ -51,36 +55,54 @@ def loadChart(chosenYear):
     pv = []
     y = []
     fig, ax = plt.subplots(figsize=(10, 6))
-    if chosenYear == "Alle":
-        years = []
+    maxDataPoints = 0
+    if chosenYear == "Zeitlinie":
+        _ = 0
         for year, monthData in years_data.items():
             for month, data in monthData.items():
-                pass
-
-
-
-    elif chosenYear == "Zeitlinie":
-        for year, monthData in years_data.items():
-            for month, data in monthData.items():
-                # print(f"{year} was year,  {month} was month, {data} was data")
                 strom.append(data["strom"])
                 pv_mini.append(data["PV_Mini"])
                 pv.append(data["PV"])
                 y.append(f"{year-2000}_{month}")
 
+                _ +=1
+        maxDataPoints = _
     else:
+        _=0
         for month, data in years_data[chosenYear].items():
             strom.append(data["strom"])
             pv_mini.append(data["PV_Mini"])
             pv.append(data["PV"])
             y.append(month)
+            _ +=1
+        maxDataPoints = _
 
-    ax.plot(y, strom, label='Monat')
-    ax.plot(y ,pv_mini, label = "PV mini")
-    ax.plot(y ,pv, label= "PV")
 
-    for i in enumerate(y):
-        ax.text(strom,y,i, ha="center", va="center")
+    start_point, end_point = st.slider(
+        "Select range of points to display",
+        min_value=1,
+        max_value=maxDataPoints,
+        value=(1, maxDataPoints),  # Default to showing first 12 points
+        step=1,
+        key= "slider"
+    )
+
+    # Adjust the data range based on start_point and end_point
+    # Note: We subtract 1 from start_point because Python uses 0-based indexing
+    strom = strom[start_point-1:end_point]
+    pv_mini = pv_mini[start_point-1:end_point]
+    pv = pv[start_point-1:end_point]
+    y = y[start_point-1:end_point]
+
+    ax.plot(y, strom, label='Strom', color='black', linestyle='--', marker='o')
+    ax.plot(y, pv_mini, label="PV mini", color='blue', linestyle='-', marker='o')
+    ax.plot(y, pv, label="PV", color='yellow', linestyle='-', marker='o')
+
+    # Add numbers to each point
+    for i, (y_val, strom_val, pv_mini_val, pv_val) in enumerate(zip(y, strom, pv_mini, pv), start=start_point):
+        ax.annotate(f'{i}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center')
+        ax.annotate(f'{i}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
+        ax.annotate(f'{i}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
 
     # Diagramm beschriften
     ax.set_title('Stromdaten')
@@ -92,7 +114,9 @@ def loadChart(chosenYear):
     # Diagramm in Streamlit anzeigen
     plot = st.pyplot(fig)
     
-    return plot #?
+
+
+    return maxDataPoints
 
 
 
@@ -104,17 +128,13 @@ def drawYearsRadio():
             if filename in os.listdir(current_directory):
                 years.append(year)
 
-
     chosenYear = st.radio(
         "Which year to show",
         years,
-        )
+    )
     
-    # if chosenYear == "Alle":
-        # passYear = "Alle"
-    # else: 
-    passYear = chosenYear
-    loadChart(passYear)
+    loadChart(chosenYear)
+
 
     
 def drawInputs():
@@ -123,7 +143,7 @@ def drawInputs():
 
     year= st.number_input("Jahr:", value=current_year)
 
-    month = st.selectbox("Wähle einen Monat:", ["Bitte Auswählen", "Januar","Februar","März","April","Mai","Juni","Juli","August","Sepember","Oktober","November","Dezember"])
+    month = st.number_input("Monat:", value=1, min_value=1, max_value=12)
 
     strom = st.number_input("Menge:", value=0)
     pv_Mini= st.number_input("PV Mini:", value=0)
@@ -132,25 +152,21 @@ def drawInputs():
 
     if st.button("Daten speichern"):
         try:
-            if month != "Bitte Auswählen":
-                filename = f"y{year}.json"
-                if filename in os.listdir(current_directory):
-                    with open(filename) as loadedFile:
-                        old = json.load(loadedFile)
-                        old[month] = {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}
+            filename = f"y{year}.json"
+            if filename in os.listdir(current_directory):
+                with open(filename) as loadedFile:
+                    old = json.load(loadedFile)
+                    old[Month_translator[month]] = {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}
 
-                #? new file creating
-                else:
-                    st.write(f"new file for year 20{year} created")
-                    old = {month : {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}}
-                
-                with open(filename,'w') as file:
-                    json.dump(old, file)
-                
-                # loadChart("Zeitlinie")
-
-
-            else: st.write(f"Bitte noch den Monat auswählen")
+            #? new file creating
+            else:
+                st.write(f"new file for year 20{year} created")
+                old = {Month_translator[month] : {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}}
+            
+            with open(filename,'w') as file:
+                json.dump(old, file)
+            
+            # loadChart("Zeitlinie")
         except Exception as e: st.write(f"Error... = {e} ")
     
 
