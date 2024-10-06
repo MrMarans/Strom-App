@@ -77,7 +77,7 @@ def loadChart(chosenYear):
 
     #create Slider
     start_point, end_point = st.slider(
-        "Select range of points to display",
+        "Menge der visualisierten Datenpunkte",
         min_value=1,
         max_value=maxDataPoints,
         value=(1, maxDataPoints),
@@ -153,9 +153,9 @@ def drawSavingInputs():
 
     month = st.number_input("Monat:", value=1, min_value=1, max_value=12)
 
-    strom = st.number_input("Gesamte Strommenge:", value=0)
-    pv_Mini= st.number_input("PV Mini:", value=0)
-    pv= st.number_input("PV:", value=0)
+    strom = st.number_input("Gesamte Strommenge kWh:", value=0)
+    pv_Mini= st.number_input("PV Mini kWh:", value=0)
+    pv= st.number_input("PV kWh:", value=0)
 
 
     if st.button("Daten speichern"):
