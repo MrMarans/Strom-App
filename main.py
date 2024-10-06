@@ -46,9 +46,6 @@ def getAllYears():
 def loadChart(chosenYear):
     years_data = getAllYears()
 
-    # Add range slider for selecting the range of points to display
-    
-
     # Daten generieren
     strom = []
     pv_mini = []
@@ -66,7 +63,6 @@ def loadChart(chosenYear):
                 y.append(f"{year-2000}_{month}")
 
                 _ +=1
-        maxDataPoints = _
     else:
         _=0
         for month, data in years_data[chosenYear].items():
@@ -75,7 +71,8 @@ def loadChart(chosenYear):
             pv.append(data["PV"])
             y.append(month)
             _ +=1
-        maxDataPoints = _
+    
+    maxDataPoints = _
 
 
     start_point, end_point = st.slider(
@@ -118,8 +115,6 @@ def loadChart(chosenYear):
 
     return maxDataPoints
 
-
-
 def drawYearsRadio():
     years = ["Zeitlinie"]
     for year in range (35):
@@ -134,12 +129,14 @@ def drawYearsRadio():
     )
     
     loadChart(chosenYear)
+ 
+def drawTopInputs():
+    drawYearsRadio()
+    
 
+def drawBottomInputs():
 
     
-def drawInputs():
-
-    drawYearsRadio()
 
     year= st.number_input("Jahr:", value=current_year)
 
@@ -174,4 +171,4 @@ def drawInputs():
 
 
 # plot = loadChart("Zeitlinie")
-drawInputs()
+drawBottomInputs()
