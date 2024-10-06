@@ -75,16 +75,22 @@ def loadChart(chosenYear):
     
     maxDataPoints = _
 
-    #create Slider
-    start_point, end_point = st.slider(
-        "Menge der visualisierten Datenpunkte",
-        min_value=1,
-        max_value=maxDataPoints,
-        value=(1, maxDataPoints),
-        step=1,
-        key= "slider"
-    )
+    
 
+    #create Slider
+    try:
+        start_point, end_point = st.slider(
+            "Menge der visualisierten Datenpunkte",
+            min_value=1,
+            max_value=maxDataPoints,
+            value=(1, maxDataPoints),
+            step=1,
+            key= "slider"
+        )
+    except:
+        print(st.text("Nicht genug Datenpunkte für den Slider"))
+        start_point = 1
+        end_point = 2
     #UI to choose which buttons to show
     with st.popover("Auswahl der Stromdaten"):
         strom_bool = st.checkbox(label="Strom", value=True)
@@ -106,13 +112,12 @@ def loadChart(chosenYear):
         pv = pv[start_point-1:end_point]
         ax.plot(y, pv, label="PV", color='yellow', linestyle='-', marker='o')
     
-   
     
-    # Add numbers to each point
-    for i, (y_val, strom_val, pv_mini_val, pv_val) in enumerate(zip(y, strom, pv_mini, pv), start=start_point):
-        if strom_bool:  ax.annotate(f'{i}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center') 
-        if pv_mini_bool: ax.annotate(f'{i}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
-        if pv_bool: ax.annotate(f'{i}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
+    # Add values to each point
+    for y_val, strom_val, pv_mini_val, pv_val in zip(y, strom, pv_mini, pv):
+        if strom_bool:  ax.annotate(f'{strom_val:.1f}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center') 
+        if pv_mini_bool: ax.annotate(f'{pv_mini_val:.1f}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
+        if pv_bool: ax.annotate(f'{pv_val:.1f}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
 
     # Diagram texts
     ax.set_title(f'Stromverbrauch und Einnahmen Haus Metzger {chosenYear}')
