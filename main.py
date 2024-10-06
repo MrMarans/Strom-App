@@ -127,9 +127,9 @@ def loadChart(chosenYear):
     
     # Add difference values to each point
     for y_val, strom_val, pv_mini_val, pv_val in zip(y, strom_diff, pv_mini_diff, pv_diff):
-        if strom_bool:  ax.annotate(f'{strom_val:.1f}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center') 
-        if pv_mini_bool: ax.annotate(f'{pv_mini_val:.1f}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
-        if pv_bool: ax.annotate(f'{pv_val:.1f}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
+        if strom_bool:  ax.annotate(f'{strom_val:.0f}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center') 
+        if pv_mini_bool: ax.annotate(f'{pv_mini_val:.0f}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
+        if pv_bool: ax.annotate(f'{pv_val:.0f}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
 
     # Diagram texts
     ax.set_title(f'Stromverbrauch und Einnahmen Haus Metzger {chosenYear} (Differenzen)')
