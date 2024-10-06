@@ -16,7 +16,7 @@ current_directory = os.getcwd()
 Month_translator = {
     1: "Januar",
     2: "Februar",
-    3: "März",
+    3: "Maerz",
     4: "April",
     5: "Mai",
     6: "Juni",
@@ -46,7 +46,8 @@ def getAllYears():
 def loadChart(chosenYear):
     years_data = getAllYears()
 
-    # Daten generieren
+    
+    # Generate Data for visualisation
     strom = []
     pv_mini = []
     pv = []
@@ -74,23 +75,25 @@ def loadChart(chosenYear):
     
     maxDataPoints = _
 
-
+    #create Slider
     start_point, end_point = st.slider(
         "Select range of points to display",
         min_value=1,
         max_value=maxDataPoints,
-        value=(1, maxDataPoints),  # Default to showing first 12 points
+        value=(1, maxDataPoints),
         step=1,
         key= "slider"
     )
 
-    ##PUT in here the radio bool Buttons
-    strom_bool = st.checkbox(label="Strom", value=True)
-    pv_mini_bool = st.checkbox(label="pv_mini", value=True)
-    pv_bool = st.checkbox(label="pv", value=True)
+    #UI to choose which buttons to show
+    with st.popover("Auswahl der Stromdaten"):
+        strom_bool = st.checkbox(label="Strom", value=True)
+        pv_mini_bool = st.checkbox(label="pv_mini", value=True)
+        pv_bool = st.checkbox(label="pv", value=True)
     y = y[start_point-1:end_point]
-    # Adjust the data range based on start_point and end_point
-    # Note: We subtract 1 from start_point because Python uses 0-based indexing
+    
+
+    #Visualize Data in Plot
     if strom_bool:
         strom = strom[start_point-1:end_point]
         ax.plot(y, strom, label='Strom', color='black', linestyle='--', marker='o')
@@ -104,30 +107,27 @@ def loadChart(chosenYear):
         ax.plot(y, pv, label="PV", color='yellow', linestyle='-', marker='o')
     
    
-
-
+    
     # Add numbers to each point
     for i, (y_val, strom_val, pv_mini_val, pv_val) in enumerate(zip(y, strom, pv_mini, pv), start=start_point):
         if strom_bool:  ax.annotate(f'{i}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center') 
         if pv_mini_bool: ax.annotate(f'{i}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
         if pv_bool: ax.annotate(f'{i}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
 
-    # Diagramm beschriften
-    ax.set_title('Stromdaten')
+    # Diagram texts
+    ax.set_title(f'Stromverbrauch und Einnahmen Haus Metzger {chosenYear}')
     ax.set_xlabel('Monat')
-    ax.set_ylabel('Strommenge')
+    ax.set_ylabel('kWh')
     ax.legend()
     ax.grid(True)
 
-    # X-Achsen-Beschriftungen um 90 Grad drehen
+    # X Text rotation to be readable
     plt.xticks(rotation=90)
 
-    # Diagramm in Streamlit anzeigen
+    # Show diagram
     plot = st.pyplot(fig)
-    
 
 
-    return maxDataPoints
 
 def drawYearsRadio():
     years = ["Zeitlinie"]
@@ -138,17 +138,17 @@ def drawYearsRadio():
                 years.append(year)
 
     chosenYear = st.radio(
-        "Which year to show",
+        "Welche Daten sollen angezeigt werden?",
         years,
     )
     
     loadChart(chosenYear)
 
 
-def drawBottomInputs():
-    drawYearsRadio()
+def drawSavingInputs():
     
-
+    
+    
     year= st.number_input("Jahr:", value=current_year)
 
     month = st.number_input("Monat:", value=1, min_value=1, max_value=12)
@@ -178,8 +178,5 @@ def drawBottomInputs():
         except Exception as e: st.write(f"Error... = {e} ")
     
 
-
-
-
-# plot = loadChart("Zeitlinie")
-drawBottomInputs()
+drawYearsRadio()
+drawSavingInputs()
