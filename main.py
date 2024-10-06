@@ -84,22 +84,33 @@ def loadChart(chosenYear):
         key= "slider"
     )
 
+    ##PUT in here the radio bool Buttons
+    strom_bool = st.checkbox(label="Strom", value=True)
+    pv_mini_bool = st.checkbox(label="pv_mini", value=True)
+    pv_bool = st.checkbox(label="pv", value=True)
+    y = y[start_point-1:end_point]
     # Adjust the data range based on start_point and end_point
     # Note: We subtract 1 from start_point because Python uses 0-based indexing
-    strom = strom[start_point-1:end_point]
-    pv_mini = pv_mini[start_point-1:end_point]
-    pv = pv[start_point-1:end_point]
-    y = y[start_point-1:end_point]
+    if strom_bool:
+        strom = strom[start_point-1:end_point]
+        ax.plot(y, strom, label='Strom', color='black', linestyle='--', marker='o')
+    
+    if pv_mini_bool:
+        pv_mini = pv_mini[start_point-1:end_point]
+        ax.plot(y, pv_mini, label="PV mini", color='blue', linestyle='-', marker='o')
 
-    ax.plot(y, strom, label='Strom', color='black', linestyle='--', marker='o')
-    ax.plot(y, pv_mini, label="PV mini", color='blue', linestyle='-', marker='o')
-    ax.plot(y, pv, label="PV", color='yellow', linestyle='-', marker='o')
+    if pv_bool:    
+        pv = pv[start_point-1:end_point]
+        ax.plot(y, pv, label="PV", color='yellow', linestyle='-', marker='o')
+    
+   
+
 
     # Add numbers to each point
     for i, (y_val, strom_val, pv_mini_val, pv_val) in enumerate(zip(y, strom, pv_mini, pv), start=start_point):
-        ax.annotate(f'{i}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center')
-        ax.annotate(f'{i}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
-        ax.annotate(f'{i}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
+        if strom_bool:  ax.annotate(f'{i}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center') 
+        if pv_mini_bool: ax.annotate(f'{i}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
+        if pv_bool: ax.annotate(f'{i}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
 
     # Diagramm beschriften
     ax.set_title('Stromdaten')
@@ -107,6 +118,9 @@ def loadChart(chosenYear):
     ax.set_ylabel('Strommenge')
     ax.legend()
     ax.grid(True)
+
+    # X-Achsen-Beschriftungen um 90 Grad drehen
+    plt.xticks(rotation=90)
 
     # Diagramm in Streamlit anzeigen
     plot = st.pyplot(fig)
@@ -129,20 +143,17 @@ def drawYearsRadio():
     )
     
     loadChart(chosenYear)
- 
-def drawTopInputs():
-    drawYearsRadio()
-    
+
 
 def drawBottomInputs():
-
+    drawYearsRadio()
     
 
     year= st.number_input("Jahr:", value=current_year)
 
     month = st.number_input("Monat:", value=1, min_value=1, max_value=12)
 
-    strom = st.number_input("Menge:", value=0)
+    strom = st.number_input("Gesamte Strommenge:", value=0)
     pv_Mini= st.number_input("PV Mini:", value=0)
     pv= st.number_input("PV:", value=0)
 
