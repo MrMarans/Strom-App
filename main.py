@@ -46,7 +46,6 @@ def getAllYears():
 def loadChart(chosenYear):
     years_data = getAllYears()
 
-    
     # Generate Data for visualisation
     strom = []
     pv_mini = []
@@ -54,28 +53,35 @@ def loadChart(chosenYear):
     y = []
     fig, ax = plt.subplots(figsize=(10, 6))
     maxDataPoints = 0
+
+    month_order = ["Januar", "Februar", "Maerz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
+
     if chosenYear == "Zeitlinie":
         _ = 0
-        for year, monthData in years_data.items():
-            for month, data in monthData.items():
+        sorted_years = sorted(years_data.keys())
+        for year in sorted_years:
+            monthData = years_data[year]
+            sorted_months = sorted(monthData.keys(), key=lambda x: month_order.index(x))
+            for month in sorted_months:
+                data = monthData[month]
                 strom.append(data["strom"])
                 pv_mini.append(data["PV_Mini"])
                 pv.append(data["PV"])
                 y.append(f"{year-2000}_{month}")
-
-                _ +=1
+                _ += 1
     else:
-        _=0
-        for month, data in years_data[chosenYear].items():
+        _ = 0
+        monthData = years_data[chosenYear]
+        sorted_months = sorted(monthData.keys(), key=lambda x: month_order.index(x))
+        for month in sorted_months:
+            data = monthData[month]
             strom.append(data["strom"])
             pv_mini.append(data["PV_Mini"])
             pv.append(data["PV"])
             y.append(month)
-            _ +=1
+            _ += 1
     
     maxDataPoints = _
-
-    
 
     #create Slider
     try:
@@ -98,31 +104,37 @@ def loadChart(chosenYear):
         pv_bool = st.checkbox(label="pv", value=True)
     y = y[start_point-1:end_point]
     
+    # Calculate differences
+    def calculate_diff(data):
+        return [data[i] - data[i-1] for i in range(1, len(data))]
+
+    strom_diff = calculate_diff(strom[start_point-1:end_point])
+    pv_mini_diff = calculate_diff(pv_mini[start_point-1:end_point])
+    pv_diff = calculate_diff(pv[start_point-1:end_point])
+
+    # Remove the first point from y as well
+    y = y[1:]
 
     #Visualize Data in Plot
     if strom_bool:
-        strom = strom[start_point-1:end_point]
-        ax.plot(y, strom, label='Strom', color='black', linestyle='--', marker='o')
+        ax.plot(y, strom_diff, label='Strom', color='black', linestyle='--', marker='o')
     
     if pv_mini_bool:
-        pv_mini = pv_mini[start_point-1:end_point]
-        ax.plot(y, pv_mini, label="PV mini", color='blue', linestyle='-', marker='o')
+        ax.plot(y, pv_mini_diff, label="PV mini", color='blue', linestyle='-', marker='o')
 
     if pv_bool:    
-        pv = pv[start_point-1:end_point]
-        ax.plot(y, pv, label="PV", color='yellow', linestyle='-', marker='o')
+        ax.plot(y, pv_diff, label="PV", color='yellow', linestyle='-', marker='o')
     
-    
-    # Add values to each point
-    for y_val, strom_val, pv_mini_val, pv_val in zip(y, strom, pv_mini, pv):
+    # Add difference values to each point
+    for y_val, strom_val, pv_mini_val, pv_val in zip(y, strom_diff, pv_mini_diff, pv_diff):
         if strom_bool:  ax.annotate(f'{strom_val:.1f}', (y_val, strom_val), xytext=(0, 5), textcoords='offset points', ha='center') 
         if pv_mini_bool: ax.annotate(f'{pv_mini_val:.1f}', (y_val, pv_mini_val), xytext=(0, 5), textcoords='offset points', ha='center')
         if pv_bool: ax.annotate(f'{pv_val:.1f}', (y_val, pv_val), xytext=(0, 5), textcoords='offset points', ha='center')
 
     # Diagram texts
-    ax.set_title(f'Stromverbrauch und Einnahmen Haus Metzger {chosenYear}')
+    ax.set_title(f'Stromverbrauch und Einnahmen Haus Metzger {chosenYear} (Differenzen)')
     ax.set_xlabel('Monat')
-    ax.set_ylabel('kWh')
+    ax.set_ylabel('kWh (Differenz zum Vormonat)')
     ax.legend()
     ax.grid(True)
 
