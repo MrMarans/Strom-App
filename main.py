@@ -33,12 +33,13 @@ def getAllYears():
         year += 2000 
         filename = f"y{year}.json"
         if filename in os.listdir(current_directory):
-            with open(f"{current_directory}/{filename}") as loadedFile:
-                try:
-                    year_data = json.load(loadedFile)
-                    years_data[year] = year_data         
-                except EOFError:
-                    st.write("Error loading")
+            if filename.endswith('.json'):
+                with open(f"{current_directory}/{filename}") as loadedFile:
+                    try:
+                        year_data = json.load(loadedFile)
+                        years_data[year] = year_data         
+                    except EOFError:
+                        st.write("Error loading")
     return years_data
 
 def loadChart(chosenYear):
