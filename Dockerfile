@@ -38,11 +38,8 @@ WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Copy project files
+# Copy project files including the data folder
 COPY . /app
-
-# Create a volume for the data folder
-VOLUME /app/data
 
 EXPOSE 8501
 
