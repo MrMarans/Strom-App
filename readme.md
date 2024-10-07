@@ -1,4 +1,4 @@
-This App is a small app to track ones own electricity intake our outtake. 
+This App is a small app to track ones own electricity intake our outtake. Its in german since this app was created for my father who cant speak english. 
 
 Basically you have a timeline and you can add something based on year and month. 
 Currently hard coded to show statistics only until 2035.
