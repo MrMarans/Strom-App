@@ -12,7 +12,7 @@ to start the app:
 streamlit run main.py  
 
 To build:
-docker build -t strom-app -f app.dockerfile .
+docker build -t strom-app -f Dockerfile .
 
 then
 
