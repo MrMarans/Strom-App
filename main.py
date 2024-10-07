@@ -219,12 +219,13 @@ def drawBackupButtons():
 
 
         for file in os.listdir(current_directory):
-            with open(f"{current_directory}/{file}", "rb") as downloadFile:
-                st.download_button(
-                label=f"Download {file}",
-                data=downloadFile,
-                file_name=file,
-                mime="year/json",)
+            if file.endswith('.json'):
+                with open(f"{current_directory}/{file}", "rb") as downloadFile:
+                    st.download_button(
+                    label=f"Download {file}",
+                    data=downloadFile,
+                    file_name=file,
+                    mime="year/json",)
 
 drawYearsRadio()
 drawSavingInputs()
