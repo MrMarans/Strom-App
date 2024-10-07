@@ -182,7 +182,6 @@ def drawSavingInputs():
                     old[Month_translator[month]] = {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}
 
             #? new file creating 
-            
             else:
                 st.write(f"new file for year {year} created")
                 old = {Month_translator[month] : {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}}
