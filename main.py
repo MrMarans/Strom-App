@@ -1,14 +1,12 @@
 import streamlit as st
 import time
-import pandas as pd
-import numpy as np
 import json
 import os
 from datetime import datetime
 import matplotlib.pyplot as plt
 
 current_year = datetime.now().year
-current_directory = os.getcwd()
+current_directory = os.getcwd() + "/data"
 # plot = st.pyplot()
 #chart = st.line_chart()
 
@@ -22,7 +20,7 @@ Month_translator = {
     6: "Juni",
     7: "Juli",
     8: "August",
-    9: "September",  # Korrektur der Schreibweise von "September"
+    9: "September",  
     10: "Oktober",
     11: "November",
     12: "Dezember"
@@ -35,7 +33,7 @@ def getAllYears():
         year += 2000 
         filename = f"y{year}.json"
         if filename in os.listdir(current_directory):
-            with open(filename) as loadedFile:
+            with open(f"{current_directory}/{filename}") as loadedFile:
                 try:
                     year_data = json.load(loadedFile)
                     years_data[year] = year_data         
@@ -179,7 +177,7 @@ def drawSavingInputs():
         try:
             filename = f"y{year}.json"
             if filename in os.listdir(current_directory):
-                with open(filename) as loadedFile:
+                with open(f"{current_directory}/{filename}") as loadedFile:
                     old = json.load(loadedFile)
                     old[Month_translator[month]] = {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}
 
@@ -188,12 +186,35 @@ def drawSavingInputs():
                 st.write(f"new file for year 20{year} created")
                 old = {Month_translator[month] : {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}}
             
-            with open(filename,'w') as file:
+            with open(f"{current_directory}/{filename}",'w') as file:
                 json.dump(old, file)
             
             # loadChart("Zeitlinie")
         except Exception as e: st.write(f"Error... = {e} ")
     
+def drawBackupButtons():
+    with st.popover("Backup"):
+        uploaded_files = st.file_uploader(
+        "Upload the json data", accept_multiple_files=True
+        )
+        for uploaded_file in uploaded_files:
+            bytes_data = uploaded_file.read()
+            try:
+                json.dump(uploaded_file, uploaded_file.name)
+                st.write(f"filename: {uploaded_file.name} saved")
+            except:
+                st.write(f"filename {uploaded_file.name} couldnt be saved") 
+
+
+
+        for file in os.listdir(current_directory):
+            with open(f"{current_directory}/{file}", "rb") as downloadFile:
+                st.download_button(
+                label=f"Download {file}",
+                data=downloadFile,
+                file_name=file,
+                mime="year/json",)
 
 drawYearsRadio()
 drawSavingInputs()
+drawBackupButtons()
