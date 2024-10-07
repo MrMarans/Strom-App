@@ -16,5 +16,5 @@ jobs:
           docker build ./api/ -t mrmarans/strom-app:latest
       - name: push image to docker hub
         run: |
-          docker login -u mrmarans -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker login -u mrmarans -p ${{ secrets.DOCKERHUB_TOKEN }}
           docker push mrmarans/strom-app:latest
