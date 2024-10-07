@@ -183,7 +183,7 @@ def drawSavingInputs():
 
             #? new file creating
             else:
-                st.write(f"new file for year 20{year} created")
+                st.write(f"new file for year {year} created")
                 old = {Month_translator[month] : {"strom": strom, "PV_Mini": pv_Mini, "PV": pv}}
             
             with open(f"{current_directory}/{filename}",'w') as file:
@@ -195,15 +195,25 @@ def drawSavingInputs():
 def drawBackupButtons():
     with st.popover("Backup"):
         uploaded_files = st.file_uploader(
-        "Upload the json data", accept_multiple_files=True
+            "Upload the json data", 
+            accept_multiple_files=True,
+            type=['json']  # Nur JSON-Dateien erlauben
         )
         for uploaded_file in uploaded_files:
-            bytes_data = uploaded_file.read()
             try:
-                json.dump(uploaded_file, uploaded_file.name)
-                st.write(f"filename: {uploaded_file.name} saved")
-            except:
-                st.write(f"filename {uploaded_file.name} couldnt be saved") 
+                # Dateiinhalt als JSON lesen
+                json_data = json.loads(uploaded_file.getvalue().decode('utf-8'))
+                
+                # Speichern der JSON-Datei
+                save_path = os.path.join(current_directory, uploaded_file.name)
+                with open(save_path, 'w') as file:
+                    json.dump(json_data, file, indent=4)
+                
+                st.success(f"Datei {uploaded_file.name} wurde erfolgreich gespeichert.")
+            except json.JSONDecodeError:
+                st.error(f"Datei {uploaded_file.name} enthält ungültiges JSON und konnte nicht gespeichert werden.")
+            except Exception as e:
+                st.error(f"Fehler beim Speichern von {uploaded_file.name}: {str(e)}") 
 
 
 
