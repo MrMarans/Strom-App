@@ -40,7 +40,6 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy project files
 COPY . /app
-RUN rm -rf /app/data
 
 # Create a volume for the data folder
 VOLUME /app/data
