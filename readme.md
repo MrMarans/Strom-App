@@ -20,3 +20,7 @@ docker run -d -p 8501:8501 --name strom-app-container strom-app
 
 
 ![Potentiometer Holder](Image.PNG)
+
+
+For my context: To update this to docker, use command
+docker buildx build --platform linux/amd64,linux/arm64 -t mrmarans/strom-app:latest --push . 
